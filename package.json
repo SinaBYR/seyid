@@ -7,7 +7,9 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind:build": "tailwindcss build -o public/css/tailwind.css",
+    "tailwind:watch": "tailwindcss build -m -o public/css/tailwind.css --watch"
   },
   "repository": {
     "type": "git",
