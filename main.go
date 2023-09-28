@@ -16,6 +16,7 @@ type Film struct {
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.InitDatabase()
+	defer db.Close()
 
 	rows, err := db.Query("SELECT * FROM films;")
 	if err != nil {
@@ -38,7 +39,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string][]Film{ "films": Films } 
 
-	tmpl := template.Must(template.ParseFiles("index.html"))
+	tmpl := template.Must(template.ParseFiles("templates/index.html"))
 	tmpl.Execute(w, data)
 }
 
