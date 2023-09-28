@@ -1,0 +1,25 @@
+{
+  "name": "seyid",
+  "version": "1.0.0",
+  "description": "Housing expenses management system for personal use",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinabyr/seyid.git"
+  },
+  "author": "Sina Beyraghdar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sinabyr/seyid/issues"
+  },
+  "homepage": "https://github.com/sinabyr/seyid#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

@@ -1,2 +1,6 @@
 # air tmp folder
 tmp
+
+node_modules
+
+pnpm-lock.yaml
