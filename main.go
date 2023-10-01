@@ -47,7 +47,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	rows, err := db.Query(`
-		SELECT *
+		SELECT r.id, r.description, r.amount, r.datetime, u.nickname, u.avatar, c.title, c.icon
 		FROM receipts r, categories c, users u
 		WHERE r.category_id = c.id AND r.user_id = u.id
 	`)
@@ -58,24 +58,44 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	var receipts []types.Receipt
 	for rows.Next() {
 		var id int64
+		var description string
 		var amount int64
-		var category types.Category
-		var user types.UserAccount
-		var issuedAt time.Time
+		var datetime time.Time
+		var nickname string
+		var avatar string
+		var categoryTitle string
+		var categoryIcon string
 
-		err := rows.Scan(&id, &amount, &user, &category, &issuedAt)
+		err := rows.Scan(
+			&id,
+			&description,
+			&amount,
+			&datetime,
+			&nickname,
+			&avatar,
+			&categoryTitle,
+			&categoryIcon,
+		)
 		if err != nil {
 			panic(err)
 		}
 
 		receipts = append(receipts, types.Receipt{
 			Id: id,
+			Description: description,
 			Amount: amount,
-			Category: category,
-			User: user,
-			IssuedAt: issuedAt,
+			Datetime: datetime,
+			Nickname: nickname,
+			Avatar: avatar,
+			CategoryTitle: categoryTitle,
+			CategoryIcon: categoryIcon,
 		})
 	}
+
+	data := map[string][]types.Receipt{ "receipts": receipts }
+
+	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl.Execute(w, data)
 }
 
 func categoriesHandler(w http.ResponseWriter, r *http.Request) {
@@ -118,8 +138,8 @@ func categoriesHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	// serve "./public" directory contents under "/static" url path
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./public"))))
-	http.HandleFunc("/categories", categoriesHandler)
-	// http.HandleFunc("/", homeHandler)
+	// http.HandleFunc("/categories", categoriesHandler)
+	http.HandleFunc("/", homeHandler)
 	http.ListenAndServe(":8000", nil)
 }
 
