@@ -11,6 +11,47 @@ import (
 	"time"
 )
 
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	db := lib.InitDatabase()
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT *
+		FROM users;
+	`)
+	if err != nil {
+		panic(err)
+	}
+
+	var users []types.UserAccount
+	for rows.Next() {
+		var id int64
+		var nickname string
+		var avatar sql.NullString
+
+		err := rows.Scan(&id, &nickname, &avatar)
+		if err != nil {
+			panic(err)
+		}
+
+		users = append(users, types.UserAccount{
+			Id: id,
+			Nickname: nickname,
+			Avatar: avatar.String,
+		})
+	}
+
+	htmlStr := ""
+	for _, c := range users {
+		htmlStr += fmt.Sprintf(
+			`<option value="%d">%s</option>%s`, c.Id, c.Nickname, "\n",
+		)
+	}
+
+	tmpl, _ := template.New("t").Parse(htmlStr)
+	tmpl.Execute(w, nil)
+}
+
 func GetCategories(w http.ResponseWriter, r *http.Request) {
 	db := lib.InitDatabase()
 	defer db.Close()
@@ -48,7 +89,6 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
-	fmt.Printf("%s\n", htmlStr)
 	tmpl, _ := template.New("t").Parse(htmlStr)
 	tmpl.Execute(w, nil)
 }

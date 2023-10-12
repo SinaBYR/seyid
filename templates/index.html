@@ -86,10 +86,7 @@
 				</div>
 				<div>
 					<label for="userId" class="block">User</label>
-					<select name="userId" id="userId">
-						<option value="1">Sina</option>
-						<option value="2">Ali</option>
-					</select>
+					<select name="userId" id="userId" hx-get="/extra/users" hx-trigger="load"></select>
 				</div>
 				<div class="">
 					<label for="categoryId" class="block">Category</label>

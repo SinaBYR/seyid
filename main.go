@@ -11,6 +11,7 @@ import (
 func main() {
 	// serve "./public" directory contents under "/static" url path
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./public"))))
+	http.HandleFunc("/extra/users", cmd.GetUsers)
 	http.HandleFunc("/extra/categories", cmd.GetCategories)
 	http.HandleFunc("/categories", cmd.CategoriesPageHandler)
 	http.HandleFunc("/createReceipt", cmd.CreateReceiptHandler)
