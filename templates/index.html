@@ -3,19 +3,20 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/static/css/global.css" />
 	<link rel="stylesheet" href="/static/css/tailwind.css" />
 	<title>Seyid</title>
 </head>
 <body>
 	
 	<main class="max-w-lg mx-auto">
-		<header class="flex items-center justify-between mb-8">
+		<header class="flex items-center justify-between mb-8 mt-4 text-white">
 			<h1 class="text-lg">Welcome to Seyid</h1>
 			<a class="text-green-700 underline" href="/categories">Categories</a>
 		</header>
 
 		<div class="mb-8">
-			<div class="flex items-center justify-start mb-2">
+			<div class="flex items-center justify-start mb-2 text-white">
 				<svg class="w-6 h-6 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
 				</svg>
@@ -83,19 +84,25 @@
 						<option value="31">31</option>
 					</select>
 				</div>
-				<select name="userId" id="userId">
-					<option value="1">Sina</option>
-					<option value="2">Ali</option>
-				</select>
-				<select name="categoryId" id="categoryId">
-					<option value="1">Category 1</option>
-					<option value="2">Category 2</option>
-				</select>
+				<div>
+					<label for="userId" class="block">User</label>
+					<select name="userId" id="userId">
+						<option value="1">Sina</option>
+						<option value="2">Ali</option>
+					</select>
+				</div>
+				<div class="">
+					<label for="categoryId" class="block">Category</label>
+					<select name="categoryId" id="categoryId" hx-get="/extra/categories" hx-trigger="load"></select>
+				</div>
+				<div>
+					<button type="submit" class="border text-white px-4 py-2 mt-4">Add</button>
+				</div>
 			</form>
 		</div>
 
 		<div class="mb-8">
-			<div class="flex items-center justify-start mb-2">
+			<div class="flex items-center justify-start mb-2 text-white">
 				<svg class="w-6 h-6 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185zM9.75 9h.008v.008H9.75V9zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 4.5h.008v.008h-.008V13.5zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
 				</svg>
@@ -114,12 +121,6 @@
 
 	<script src="/static/js/htmx.min.js" defer></script>
 	<script src="/static/js/jalali-moment.min.js" defer></script>
-	<script>
-		const form = document.querySelector('#form')
-		form.addEventListener('htmx:configRequest', function(evt) {
-				evt.detail.parameters['']
-		})
-	</script>
 </body>
 </html>
 
