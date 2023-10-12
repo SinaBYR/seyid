@@ -1,14 +1,93 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
 	"sinabyr/seyid/lib"
 	"sinabyr/seyid/types"
-	"time"
 	"strconv"
+	"time"
 )
+
+func GetCategories(w http.ResponseWriter, r *http.Request) {
+	db := lib.InitDatabase()
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT *
+		FROM categories;
+	`)
+	if err != nil {
+		panic(err)
+	}
+
+	var categories []types.Category
+	for rows.Next() {
+		var id int64
+		var title string
+		var icon sql.NullString
+
+		err := rows.Scan(&id, &title, &icon)
+		if err != nil {
+			panic(err)
+		}
+
+		categories = append(categories, types.Category{
+			Id: id,
+			Title: title,
+			Icon: icon.String,
+		})
+	}
+
+	htmlStr := ""
+	for _, c := range categories {
+		htmlStr += fmt.Sprintf(
+			`<option value="%d">%s</option>%s`, c.Id, c.Title, "\n",
+		)
+	}
+
+	fmt.Printf("%s\n", htmlStr)
+	tmpl, _ := template.New("t").Parse(htmlStr)
+	tmpl.Execute(w, nil)
+}
+
+func CategoriesPageHandler(w http.ResponseWriter, r *http.Request) {
+	db := lib.InitDatabase()
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT *
+		FROM categories
+	`)
+	if err != nil {
+		panic(err)
+	}
+
+	var categories []types.Category
+	for rows.Next() {
+		var id int64
+		var title string
+		var icon string
+
+		err := rows.Scan(&id, &title, &icon)
+		if err != nil {
+			panic(err)
+		}
+
+		categories = append(categories, types.Category{
+			Id: id,
+			Title: title,
+			Icon: icon,
+		})
+	}
+
+	data := map[string][]types.Category{ "categories": {{Id: 1, Title: "hello", Icon: "world"}} }
+
+	tmpl := template.Must(template.ParseFiles("templates/categories.html"))
+	tmpl.Execute(w, data)
+}
 
 func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	description := r.PostFormValue("description")
@@ -68,7 +147,7 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
+func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	db := lib.InitDatabase()
 	defer db.Close()
 
