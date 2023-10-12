@@ -14,7 +14,7 @@ type Category struct {
 
 type UserAccount struct {
 	Id int64
-	Name string
+	Nickname string
 	Avatar string
 }
 
