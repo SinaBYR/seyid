@@ -33,11 +33,12 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+		// fmt.Println(avatar.String)
 
 		users = append(users, types.UserAccount{
 			Id: id,
 			Nickname: nickname,
-			Avatar: avatar.String,
+			Avatar: "",
 		})
 	}
 
@@ -148,15 +149,16 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		FROM inserted_receipt r, users u, categories c
 		WHERE r.user_id = u.id AND r.category_id = c.id
 	`, description, amount, time.Unix(datetimeEpoch, 0), userId, categoryId)
+	fmt.Printf("row: %v\n", row)
 
 	var rowId int64
 	var rowDescription string
 	var rowAmount int64
 	var rowDatetime time.Time
 	var rowNickname string
-	var rowAvatar string
+	var rowAvatar sql.NullString
 	var rowCategoryTitle string
-	var rowCategoryIcon string
+	var rowCategoryIcon sql.NullString
 
 	err := row.Scan(
 		&rowId,
@@ -172,13 +174,30 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	var rowCategoryIconString string
+	var rowAvatarString string
+
+	if rowCategoryIcon.Valid {
+		rowCategoryIconString = rowCategoryIcon.String
+	} else {
+		rowCategoryIconString = ""
+	}
+
+	if rowAvatar.Valid {
+		rowAvatarString = rowAvatar.String
+	} else {
+		rowAvatarString = ""
+	}
+
 	htmlStr := fmt.Sprintf(`
 		<li>
 			<h2>%s</h2>
 			<h3>Amount: %d</h3>
 			<h3>%s</h3>
+			<h3>%s</h3>
+			<h3>%s</h3>
 		</li>
-	`, rowDescription, rowAmount, rowNickname)
+	`, rowDescription, rowAmount, rowNickname, rowCategoryIconString, rowAvatarString)
 
 	tmpl, err := template.New("t").Parse(htmlStr)
 	if err != nil {
@@ -207,9 +226,9 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 		var amount int64
 		var datetime time.Time
 		var nickname string
-		var avatar string
+		var avatar sql.NullString
 		var categoryTitle string
-		var categoryIcon string
+		var categoryIcon sql.NullString
 
 		err := rows.Scan(
 			&id,
@@ -231,9 +250,9 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 			Amount: amount,
 			Datetime: datetime,
 			Nickname: nickname,
-			Avatar: avatar,
+			Avatar: avatar.String,
 			CategoryTitle: categoryTitle,
-			CategoryIcon: categoryIcon,
+			CategoryIcon: categoryIcon.String,
 		})
 	}
 
