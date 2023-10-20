@@ -33,15 +33,22 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Println(avatar.String)
+
+		var avatarString string
+		if avatar.Valid {
+			avatarString = avatar.String
+		} else {
+			avatarString = ""
+		}
 
 		users = append(users, types.UserAccount{
 			Id: id,
 			Nickname: nickname,
-			Avatar: "",
+			Avatar: avatarString,
 		})
 	}
 
+	// TODO use Avatar
 	htmlStr := ""
 	for _, c := range users {
 		htmlStr += fmt.Sprintf(
@@ -76,13 +83,21 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
+		var iconString string
+		if icon.Valid {
+			iconString = icon.String
+		} else {
+			iconString = ""
+		}
+
 		categories = append(categories, types.Category{
 			Id: id,
 			Title: title,
-			Icon: icon.String,
+			Icon: iconString,
 		})
 	}
 
+	// TODO use Icon
 	htmlStr := ""
 	for _, c := range categories {
 		htmlStr += fmt.Sprintf(
@@ -244,15 +259,30 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
+		var avatarString string
+		var categoryIconString string
+
+		if avatar.Valid {
+			avatarString = avatar.String
+		} else {
+			avatarString = ""
+		}
+
+		if categoryIcon.Valid {
+			categoryIconString = categoryIcon.String
+		} else {
+			categoryIconString = ""
+		}
+
 		receipts = append(receipts, types.Receipt{
 			Id: id,
 			Description: description,
 			Amount: amount,
 			Datetime: datetime,
 			Nickname: nickname,
-			Avatar: avatar.String,
+			Avatar: avatarString,
 			CategoryTitle: categoryTitle,
-			CategoryIcon: categoryIcon.String,
+			CategoryIcon: categoryIconString,
 		})
 	}
 
