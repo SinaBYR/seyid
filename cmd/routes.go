@@ -151,6 +151,7 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	datetimeEpoch, _ := strconv.ParseInt(r.PostFormValue("datetimeEpoch"), 10, 64) // convert to int64
 	userId, _ := strconv.ParseInt(r.PostFormValue("userId"), 10, 64) // convert to int64
 	categoryId, _ := strconv.ParseInt(r.PostFormValue("categoryId"), 10, 64) // convert to int64
+	fmt.Printf("%d\n", datetimeEpoch)
 
 	db := lib.InitDatabase()
 	defer db.Close()
@@ -160,7 +161,7 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		INSERT INTO receipts (description, amount, datetime, user_id, category_id)
 		VALUES ($1,$2,$3,$4,$5)
 		RETURNING *
-	) SELECT r.id, r.description, r.amount, r.datetime, u.nickname, u.avatar, c.title, c.icon
+	) SELECT r.id, r.description, r.amount, r.datetime, u.avatar, c.title, c.icon
 		FROM inserted_receipt r, users u, categories c
 		WHERE r.user_id = u.id AND r.category_id = c.id
 	`, description, amount, time.Unix(datetimeEpoch, 0), userId, categoryId)
@@ -170,7 +171,7 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	var rowDescription string
 	var rowAmount int64
 	var rowDatetime time.Time
-	var rowNickname string
+	// var rowNickname string
 	var rowAvatar sql.NullString
 	var rowCategoryTitle string
 	var rowCategoryIcon sql.NullString
@@ -180,7 +181,7 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		&rowDescription,
 		&rowAmount,
 		&rowDatetime,
-		&rowNickname,
+		// &rowNickname,
 		&rowAvatar,
 		&rowCategoryTitle,
 		&rowCategoryIcon,
@@ -205,14 +206,13 @@ func CreateReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	htmlStr := fmt.Sprintf(`
-		<li>
-			<h2>%s</h2>
-			<h3>Amount: %d</h3>
-			<h3>%s</h3>
-			<h3>%s</h3>
-			<h3>%s</h3>
-		</li>
-	`, rowDescription, rowAmount, rowNickname, rowCategoryIconString, rowAvatarString)
+		<tr>
+			<td class="p-4 text-white text-left">%s</td>
+			<td class="p-4 text-white text-left">%d</td>
+			<td class="p-4 text-white text-left">%s</td>
+			<td class="p-4 text-white text-left">%s</td>
+		</tr>
+	`, rowDescription, rowAmount, rowCategoryIconString, rowAvatarString)
 
 	tmpl, err := template.New("t").Parse(htmlStr)
 	if err != nil {
