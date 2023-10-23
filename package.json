@@ -23,5 +23,8 @@
   "homepage": "https://github.com/sinabyr/seyid#readme",
   "devDependencies": {
     "tailwindcss": "^3.3.3"
+  },
+  "dependencies": {
+    "jalali-moment": "^3.3.11"
   }
 }
