@@ -125,17 +125,24 @@ func CategoriesPageHandler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var id int64
 		var title string
-		var icon string
+		var icon sql.NullString
 
 		err := rows.Scan(&id, &title, &icon)
 		if err != nil {
 			panic(err)
 		}
 
+		var iconString string
+		if icon.Valid {
+			iconString = icon.String
+		} else {
+			iconString = ""
+		}
+
 		categories = append(categories, types.Category{
 			Id: id,
 			Title: title,
-			Icon: icon,
+			Icon: iconString,
 		})
 	}
 
